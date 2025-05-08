@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
 
+	"github.com/JonasLindermayr/PasswordManager/lib"
 	"github.com/JonasLindermayr/PasswordManager/ui"
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -11,13 +11,17 @@ import (
 var version = "0.0.1"
 
 func main() {
-	// TODO: Check if db exists -> if not create one with master password
-	// TODO: Check if db exists -> if check master password is correct
 
-	p := tea.NewProgram(ui.InitialModel(version))
-	if _, err := p.Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
+	store := new(lib.Store)
+	if err := store.Init(); err != nil {
+		log.Fatal(err)
 	}
+
+	m := ui.NewModel(store, version)
+	if _, err := tea.NewProgram(m).Run(); err != nil {
+		log.Fatal(err)
+	}
+
+
 }
 
